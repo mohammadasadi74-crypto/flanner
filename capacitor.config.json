@@ -1,1 +1,1 @@
-{"appId":"ir.flicker.flanner","appName":"flanner","webDir":"www","android":{"allowMixedContent":false}}
+{"appId":"ir.flicker.flanner","appName":"flanner","webDir":"www","android":{"allowMixedContent":false},"plugins":{"LocalNotifications":{"smallIcon":"ic_stat_flanner","iconColor":"#E5322D"}}}
