@@ -21,6 +21,8 @@ mf = A + '/AndroidManifest.xml'
 t = open(mf, encoding='utf8').read()
 add = ('<uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY"/>\n'
        '    <uses-permission android:name="android.permission.VIBRATE"/>\n'
+       '    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>\n'
+       '    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>\n'
        '    <queries><intent><action android:name="android.intent.action.MAIN"/>'
        '<category android:name="android.intent.category.LAUNCHER"/></intent></queries>\n    ')
 assert '<application' in t
@@ -40,4 +42,6 @@ for d, z in [('mdpi', 48), ('hdpi', 72), ('xhdpi', 96), ('xxhdpi', 144), ('xxxhd
     rounded(sm).save(f'{A}/res/mipmap-{d}/ic_launcher.png')
     rounded(sm).save(f'{A}/res/mipmap-{d}/ic_launcher_foreground.png')
     rounded(sm, True).save(f'{A}/res/mipmap-{d}/ic_launcher_round.png')
+os.makedirs(A + '/res/drawable', exist_ok=True)
+open(A + '/res/drawable/ic_stat_flanner.xml', 'w').write('<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24"><path android:fillColor="#FFFFFFFF" android:fillType="evenOdd" android:pathData="M12,2a10,10 0 1,0 0,20a10,10 0 1,0 0,-20zM12.5,7h-1.5v6l5.2,3.1 0.8,-1.2 -4.5,-2.7z"/></vector>')
 print('patched')
