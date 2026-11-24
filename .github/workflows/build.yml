@@ -19,6 +19,8 @@ jobs:
           java-version: 17
       - run: pip install pillow
       - run: npm install
+      - run: cp node_modules/@capacitor/core/dist/capacitor.js www/capacitor.js && sed -i 's#<head>#<head><script src="capacitor.js"></script>#' www/index.html
+      - run: mkdir -p ~/.android && cp debug.keystore ~/.android/debug.keystore
       - run: npx cap add android
       - run: python3 native/patch.py
       - run: npx cap sync android
