@@ -8,6 +8,9 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.OpenableColumns;
 import android.provider.Settings;
@@ -23,6 +26,7 @@ import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.ActivityCallback;
 import com.getcapacitor.annotation.CapacitorPlugin;
 
+import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -194,5 +198,30 @@ public class FlannerPlugin extends Plugin {
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         ctx().startActivity(i);
         call.resolve();
+    }
+
+    @PluginMethod
+    public void getIcons(PluginCall call) {
+        PackageManager pm = ctx().getPackageManager();
+        JSArray arr = call.getArray("pkgs");
+        JSObject out = new JSObject();
+        if (arr != null) {
+            for (int i = 0; i < arr.length(); i++) {
+                try {
+                    String p = arr.getString(i);
+                    Drawable d = pm.getApplicationIcon(p);
+                    Bitmap b = Bitmap.createBitmap(96, 96, Bitmap.Config.ARGB_8888);
+                    Canvas c = new Canvas(b);
+                    d.setBounds(0, 0, 96, 96);
+                    d.draw(c);
+                    ByteArrayOutputStream os = new ByteArrayOutputStream();
+                    b.compress(Bitmap.CompressFormat.PNG, 100, os);
+                    out.put(p, Base64.encodeToString(os.toByteArray(), Base64.NO_WRAP));
+                } catch (Exception e) { /* skip this app */ }
+            }
+        }
+        JSObject res = new JSObject();
+        res.put("icons", out);
+        call.resolve(res);
     }
 }
