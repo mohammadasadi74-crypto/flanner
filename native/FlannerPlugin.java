@@ -186,4 +186,13 @@ public class FlannerPlugin extends Plugin {
         }
         call.resolve();
     }
+
+    @PluginMethod
+    public void openNotifSettings(PluginCall call) {
+        Intent i = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+        i.putExtra(Settings.EXTRA_APP_PACKAGE, ctx().getPackageName());
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        ctx().startActivity(i);
+        call.resolve();
+    }
 }
