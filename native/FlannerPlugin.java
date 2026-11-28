@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.provider.OpenableColumns;
 import android.provider.Settings;
 import android.util.Base64;
@@ -223,5 +224,32 @@ public class FlannerPlugin extends Plugin {
         JSObject res = new JSObject();
         res.put("icons", out);
         call.resolve(res);
+    }
+
+    @PluginMethod
+    public void pickContact(PluginCall call) {
+        Intent i = new Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
+        startActivityForResult(call, i, "contactDone");
+    }
+
+    @ActivityCallback
+    private void contactDone(PluginCall call, ActivityResult r) {
+        if (call == null) return;
+        if (r.getResultCode() != Activity.RESULT_OK || r.getData() == null || r.getData().getData() == null) {
+            call.reject("cancel");
+            return;
+        }
+        Uri u = r.getData().getData();
+        Cursor c = ctx().getContentResolver().query(u, new String[]{
+                ContactsContract.CommonDataKinds.Phone.NUMBER,
+                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME}, null, null, null);
+        JSObject o = new JSObject();
+        try {
+            if (c != null && c.moveToFirst()) {
+                o.put("number", c.getString(0));
+                o.put("name", c.getString(1));
+            }
+        } finally { if (c != null) c.close(); }
+        call.resolve(o);
     }
 }
